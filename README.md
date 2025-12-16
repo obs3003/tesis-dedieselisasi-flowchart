@@ -1,4 +1,3 @@
-# tesis-dedieselisasi-flowchart
 flowchart TD
 A[START: Tujuan & Ruang Lingkup] --> B[Pengumpulan Data]
 B --> C[Pre-processing & Z-score]
