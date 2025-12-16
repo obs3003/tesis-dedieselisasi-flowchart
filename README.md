@@ -7,11 +7,11 @@ D -- No --> C
 E --> F{Clustering valid?}
 F -- Yes --> G[Hitung PRI & GCI]
 F -- No --> E
-G --> H[AHP (CR ≤ 0,10?)]
-H -->|Yes| I[TOPSIS Ranking]
-H -->|No| H
+G --> H{CR ≤ 0,10?}
+H -- Yes --> I[TOPSIS Ranking]
+H -- No --> H
 I --> J[Robustness Check]
 J --> K{Ranking stabil?}
-K -->|Yes| L[Output akhir & interpretasi]
-K -->|No| G
+K -- Yes --> L[Output akhir & interpretasi]
+K -- No --> G
 L --> M[END]
