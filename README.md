@@ -1,30 +1,36 @@
 ```mermaid
 flowchart LR;
-A([START]) --> B["1) Kumpulkan data lokasi PLTD"];
-B --> C["2) Data cleaning & pre-processing (Z-score)"];
-C --> D{"Missing/Outlier OK?"};
 
-D -- Yes --> E["3) Clustering (opsional PCA)"];
-D -- No --> C;
+%% --- KOLOM KIRI (pipeline utama) ---
+subgraph L[" "]
+direction TB
+S((Mulai)) --> IO[/Studi literatur<br/>+ Pengumpulan data/];
+IO --> P1[Data cleaning &<br/>pre-processing (Z-score)];
+P1 --> D1{Missing/Outlier<br/>OK?};
+D1 -- Tidak --> P1;
+D1 -- Ya --> P2[Clustering (K-means/CLARA)<br/>(opsional PCA)];
+P2 --> P3[Validasi cluster<br/>(Silhouette/CH/DB)];
+P3 --> D2{Cluster valid?};
+D2 -- Tidak --> P2;
+D2 -- Ya --> P4[Hitung indeks implementasi<br/>PRI (GHI) & GCI (jarak+depth)];
+P4 --> P5[Definisi 7 kriteria<br/>(benefit/cost)];
+P5 --> P6[AHP: bobot kriteria<br/>+ uji CR];
+P6 --> D3{CR ≤ 0,10?};
+D3 -- Tidak --> P6;
+D3 -- Ya --> A((A));
+end
 
-E --> F["4) Validasi clustering (Silhouette/CH/DB)"];
-F --> G{"Clustering valid?"};
+%% --- KOLOM KANAN (ranking + robustness) ---
+subgraph R[" "]
+direction TB
+A --> T1[TOPSIS: normalisasi<br/>+ bobot AHP + CC];
+T1 --> T2[Robustness & benchmarking<br/>(ablation + Monte Carlo bobot)];
+T2 --> D4{Ranking stabil?<br/>(Top-10 overlap tinggi)};
+D4 -- Ya --> OUT[/Output akhir:<br/>tabel + insight/];
+OUT --> E((Selesai));
+D4 -- Tidak --> FIX[Kalibrasi indeks/kriteria<br/>atau cek kualitas data];
+end
 
-G -- Yes --> H["5) Hitung indeks: PRI (GHI) & GCI (jarak+depth)"];
-G -- No --> E;
-
-H --> I["6) Definisikan kriteria (7 kriteria)"];
-I --> J["7) AHP: susun bobot + hitung CR"];
-J --> K{"CR ≤ 0.10?"};
-
-K -- Yes --> L["8) TOPSIS ranking (CC & Rank)"];
-K -- No --> J;
-
-L --> M["9) Robustness & benchmarking (ablation/MC bobot)"];
-M --> N{"Ranking stabil? (Top-10 overlap tinggi)"};
-
-N -- Yes --> O["10) Output akhir: tabel + insight per cluster"];
-N -- No --> H;
-
-O --> P([END]);
+%% loop balik rapi ke langkah indeks/kriteria
+FIX --> P4;
 ```
