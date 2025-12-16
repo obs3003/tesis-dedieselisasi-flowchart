@@ -1,36 +1,43 @@
 ```mermaid
 flowchart LR;
+S((Mulai));
+IO[/Studi literatur<br/>+ Pengumpulan data/];
+P1[Data cleaning &<br/>pre-processing (Z-score)];
+D1{Missing/Outlier<br/>OK?};
+P2[Clustering (K-means/CLARA)<br/>(opsional PCA)];
+P3[Validasi cluster<br/>(Silhouette/CH/DB)];
+D2{Cluster valid?};
+P4[Hitung indeks implementasi<br/>PRI (GHI) & GCI (jarak+depth)];
+P5[Definisi 7 kriteria<br/>(benefit/cost)];
+P6[AHP: bobot kriteria<br/>+ uji CR];
+D3{CR <= 0.10?};
+A((A));
+T1[TOPSIS: normalisasi<br/>+ bobot AHP + CC];
+T2[Robustness & benchmarking<br/>(ablation + Monte Carlo bobot)];
+D4{Ranking stabil?<br/>(Top-10 overlap tinggi)};
+FIX[Kalibrasi indeks/kriteria<br/>atau cek kualitas data];
+OUT[/Output akhir:<br/>tabel + insight/];
+E((Selesai));
 
-%% --- KOLOM KIRI (pipeline utama) ---
-subgraph L[" "]
-direction TB
-S((Mulai)) --> IO[/Studi literatur<br/>+ Pengumpulan data/];
-IO --> P1[Data cleaning &<br/>pre-processing (Z-score)];
-P1 --> D1{Missing/Outlier<br/>OK?};
+S --> IO;
+IO --> P1;
+P1 --> D1;
+D1 -- Ya --> P2;
 D1 -- Tidak --> P1;
-D1 -- Ya --> P2[Clustering (K-means/CLARA)<br/>(opsional PCA)];
-P2 --> P3[Validasi cluster<br/>(Silhouette/CH/DB)];
-P3 --> D2{Cluster valid?};
+P2 --> P3;
+P3 --> D2;
+D2 -- Ya --> P4;
 D2 -- Tidak --> P2;
-D2 -- Ya --> P4[Hitung indeks implementasi<br/>PRI (GHI) & GCI (jarak+depth)];
-P4 --> P5[Definisi 7 kriteria<br/>(benefit/cost)];
-P5 --> P6[AHP: bobot kriteria<br/>+ uji CR];
-P6 --> D3{CR ≤ 0,10?};
+P4 --> P5;
+P5 --> P6;
+P6 --> D3;
+D3 -- Ya --> A;
 D3 -- Tidak --> P6;
-D3 -- Ya --> A((A));
-end
-
-%% --- KOLOM KANAN (ranking + robustness) ---
-subgraph R[" "]
-direction TB
-A --> T1[TOPSIS: normalisasi<br/>+ bobot AHP + CC];
-T1 --> T2[Robustness & benchmarking<br/>(ablation + Monte Carlo bobot)];
-T2 --> D4{Ranking stabil?<br/>(Top-10 overlap tinggi)};
-D4 -- Ya --> OUT[/Output akhir:<br/>tabel + insight/];
-OUT --> E((Selesai));
-D4 -- Tidak --> FIX[Kalibrasi indeks/kriteria<br/>atau cek kualitas data];
-end
-
-%% loop balik rapi ke langkah indeks/kriteria
+A --> T1;
+T1 --> T2;
+T2 --> D4;
+D4 -- Ya --> OUT;
+OUT --> E;
+D4 -- Tidak --> FIX;
 FIX --> P4;
 ```
