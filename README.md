@@ -1,3 +1,4 @@
+```mermaid
 flowchart TD
 A[START: Tujuan & Ruang Lingkup] --> B[Pengumpulan Data]
 B --> C[Pre-processing & Z-score]
@@ -15,3 +16,4 @@ J --> K{Ranking stabil?}
 K -- Yes --> L[Output akhir & interpretasi]
 K -- No --> G
 L --> M[END]
+```
